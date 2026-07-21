@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" 
+content="width=device-width, initial-scale=1.0">
+
+<title>DailyMemory</title>
+
+
+<style>
+
+body{
+    margin:0;
+    background:#F7F3EC;
+    color:#33302C;
+    font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "PingFang SC",
+    sans-serif;
+}
+
+
+.container{
+    padding:40px 24px;
+}
+
+
+h1{
+    font-size:28px;
+    font-weight:500;
+    margin:0;
+}
+
+
+.subtitle{
+    color:#9A9287;
+    margin-top:6px;
+}
+
+
+.date{
+    margin-top:40px;
+    color:#9A9287;
+}
+
+
+textarea{
+
+    margin-top:24px;
+
+    width:100%;
+
+    height:120px;
+
+    border:none;
+
+    background:#FFFDF8;
+
+    border-radius:16px;
+
+    padding:16px;
+
+    font-size:16px;
+
+    resize:none;
+
+    color:#33302C;
+
+    font-family:inherit;
+
+}
+
+
+textarea:focus{
+    outline:none;
+}
+
+
+
+button{
+
+    margin-top:20px;
+
+    width:100%;
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#8C9A82;
+
+    color:white;
+
+    font-size:16px;
+
+}
+
+
+
+.line{
+
+    margin:40px 0;
+
+    height:1px;
+
+    background:#DDD5C8;
+
+}
+
+
+
+.memory-title{
+
+    font-size:18px;
+
+}
+
+
+
+.memory-date{
+
+    margin-top:30px;
+
+    margin-bottom:16px;
+
+    font-size:18px;
+
+}
+
+
+
+.memory-item{
+
+    background:#FFFDF8;
+
+    padding:14px 16px;
+
+    border-radius:12px;
+
+    margin-bottom:12px;
+
+    line-height:1.5;
+
+}
+
+
+
+</style>
+
+
+</head>
+
+
+
+<body>
+
+
+<div class="container">
+
+
+<h1>
+DailyMemory
+</h1>
+
+
+<div class="subtitle">
+今日且留下
+</div>
+
+
+
+<div class="date" id="today">
+
+</div>
+
+
+
+<textarea
+placeholder="今天，想留下什么？">
+</textarea>
+
+
+
+<button onclick="saveMemory()">
+保存
+</button>
+
+
+
+<div class="line"></div>
+
+
+
+<div class="memory-title" id="memoryArea">
+
+</div>
+
+
+
+</div>
+
+
+
+<script>
+
+
+// 显示今天日期
+
+function showToday(){
+
+    let now = new Date();
+
+
+    let month =
+    now.getMonth()+1;
+
+
+    let day =
+    now.getDate();
+
+
+    let week =
+    [
+        "星期日",
+        "星期一",
+        "星期二",
+        "星期三",
+        "星期四",
+        "星期五",
+        "星期六"
+    ][now.getDay()];
+
+
+    document
+    .getElementById("today")
+    .innerHTML =
+    `${month}月${day}日 ${week}`;
+
+}
+
+
+
+// 保存记录
+
+function saveMemory(){
+
+
+    let input =
+    document.querySelector("textarea");
+
+
+    let text =
+    input.value.trim();
+
+
+    if(text===""){
+        return;
+    }
+
+
+
+    let memories =
+    JSON.parse(
+        localStorage.getItem("memories")
+        ||
+        "[]"
+    );
+
+
+
+    let now =
+    new Date();
+
+
+
+    memories.push({
+
+        date:
+        `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()}`,
+
+        text:text
+
+    });
+
+
+
+    localStorage.setItem(
+        "memories",
+        JSON.stringify(memories)
+    );
+
+
+
+    input.value="";
+
+
+    showMemories();
+
+}
+
+
+
+
+// 显示记录
+
+function showMemories(){
+
+
+    let memories =
+    JSON.parse(
+        localStorage.getItem("memories")
+        ||
+        "[]"
+    );
+
+
+
+    let area =
+    document.getElementById(
+        "memoryArea"
+    );
+
+
+
+    area.innerHTML="";
+
+
+
+    if(memories.length===0){
+
+        area.innerHTML =
+        "今天还没有留下记忆";
+
+        return;
+
+    }
+
+
+
+    let groups = {};
+
+
+
+    memories.forEach(item=>{
+
+
+        if(!groups[item.date]){
+
+            groups[item.date]=[];
+
+        }
+
+
+        groups[item.date]
+        .push(item.text);
+
+
+    });
+
+
+
+    Object.keys(groups)
+    .reverse()
+    .forEach(date=>{
+
+
+
+        let displayDate = formatDate(date);
+
+
+
+        area.innerHTML +=
+        `
+        <div class="memory-date">
+        ${displayDate}的记忆
+        </div>
+        `;
+
+
+
+        groups[date]
+        .forEach((text,index)=>{
+
+
+            area.innerHTML +=
+            `
+            <div class="memory-item">
+
+            ${index+1}. ${text}
+
+            </div>
+            `;
+
+
+        });
+
+
+
+    });
+
+
+
+}
+
+
+
+
+// 日期格式兼容处理
+
+function formatDate(date){
+
+
+    // 新格式：
+    // 2026-7-21
+
+    if(date.includes("-")){
+
+
+        let parts =
+        date.split("-");
+
+
+        return `${parts[1]}月${parts[2]}日`;
+
+    }
+
+
+
+    // 旧格式：
+    // 2026年7月21日
+
+    if(date.includes("年")){
+
+
+        let result =
+        date
+        .replace(
+            date.substring(0,4),
+            ""
+        )
+        .replace("年","")
+        .replace("日","");
+
+
+        return result + "日";
+
+    }
+
+
+
+    // 旧格式：
+    // 2026/7/21
+
+    if(date.includes("/")){
+
+
+        let parts =
+        date.split("/");
+
+
+        return `${parts[1]}月${parts[2]}日`;
+
+    }
+
+
+
+    return date;
+
+
+}
+
+
+
+
+showToday();
+
+showMemories();
+
+
+</script>
+
+
+</body>
+
+</html>
