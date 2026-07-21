@@ -11,6 +11,16 @@ content="width=device-width, initial-scale=1.0">
 <title>DailyMemory</title>
 
 
+<!-- App图标 -->
+<link rel="apple-touch-icon" sizes="180x180" href="./picture.png">
+
+<link rel="icon" type="image/png" sizes="512x512" href="./picture.png">
+
+<meta name="apple-mobile-web-app-title" content="DailyMemory">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+
 <style>
 
 body{
@@ -211,20 +221,15 @@ placeholder="今天，想留下什么？">
 <script>
 
 
-// 显示今天日期
-
 function showToday(){
 
     let now = new Date();
 
-
     let month =
     now.getMonth()+1;
 
-
     let day =
     now.getDate();
-
 
     let week =
     [
@@ -247,10 +252,8 @@ function showToday(){
 
 
 
-// 保存记录
 
 function saveMemory(){
-
 
     let input =
     document.querySelector("textarea");
@@ -308,10 +311,7 @@ function saveMemory(){
 
 
 
-// 显示记录
-
 function showMemories(){
-
 
     let memories =
     JSON.parse(
@@ -321,16 +321,13 @@ function showMemories(){
     );
 
 
-
     let area =
     document.getElementById(
         "memoryArea"
     );
 
 
-
     area.innerHTML="";
-
 
 
     if(memories.length===0){
@@ -369,7 +366,6 @@ function showMemories(){
     Object.keys(groups)
     .reverse()
     .forEach(date=>{
-
 
 
         let displayDate = formatDate(date);
@@ -412,16 +408,11 @@ function showMemories(){
 
 
 
-// 日期格式兼容处理
 
 function formatDate(date){
 
 
-    // 新格式：
-    // 2026-7-21
-
     if(date.includes("-")){
-
 
         let parts =
         date.split("-");
@@ -432,9 +423,6 @@ function formatDate(date){
     }
 
 
-
-    // 旧格式：
-    // 2026年7月21日
 
     if(date.includes("年")){
 
@@ -454,9 +442,6 @@ function formatDate(date){
     }
 
 
-
-    // 旧格式：
-    // 2026/7/21
 
     if(date.includes("/")){
 
